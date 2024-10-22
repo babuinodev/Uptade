@@ -25,6 +25,9 @@ public class InterfaceGrafica extends JFrame {
     
     Object[] nomeColunas = new Object[]  {"nome", "modelo", "ano", "preço"};
     DefaultTableModel dtm = new DefaultTableModel(nomeColunas, 0);
+    
+    Object[] nomeColunasFunc = new Object[]  {"nome", "salario"};
+    DefaultTableModel dtmFun = new DefaultTableModel(nomeColunasFunc, 0);
 
     public InterfaceGrafica(DaoCarro daoCarro) {
         funcionarioDAO = new DaoFuncionario();
@@ -41,19 +44,25 @@ public class InterfaceGrafica extends JFrame {
         
         
         // Botões da interface funcionario
-        JPanel painelFuncionario = new JPanel(new FlowLayout());
+        JPanel painelFuncionario = new JPanel(new BorderLayout());
+        
+        JPanel botoesFuncionario = new JPanel(new FlowLayout());
+        JTable tabelaFuncionario = new JTable(dtmFun);
+        
+        JScrollPane tabelaFuncionarioPane = new JScrollPane(tabelaFuncionario);
+        painelFuncionario.add(botoesFuncionario, BorderLayout.PAGE_START);
+        painelFuncionario.add(tabelaFuncionarioPane, BorderLayout.CENTER);
+        
         JButton btnListarFuncionarios = new JButton("Listar Funcionários");
         JButton btnAdicionarFuncionario = new JButton("Adicionar Funcionário");
-        painelFuncionario.add(btnListarFuncionarios);
-        painelFuncionario.add(btnAdicionarFuncionario);
-        
+        botoesFuncionario.add(btnListarFuncionarios);
+        botoesFuncionario.add(btnAdicionarFuncionario);
+      
         
         
         // Botões da interface carros
         JPanel painelCarros = new JPanel(new BorderLayout());
-        
         JPanel botoesCarrosPane = new JPanel(new FlowLayout());
-        
         JTable tabelaCarros = new JTable(dtm);
         JScrollPane tabelaCarrosPane = new JScrollPane(tabelaCarros);
         
@@ -73,15 +82,7 @@ public class InterfaceGrafica extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 List<Funcionario> funcionarios = funcionarioDAO.loadAll();
-                StringBuilder sb = new StringBuilder();
-                for (Funcionario f : funcionarios) {
-                    sb.append("ID: ").append(f.getid())
-                      .append(", Nome: ").append(f.getnome())
-                      .append(", Salário: ").append(f.getsalario())
-                      .append("\n");
-                }
-                JOptionPane.showMessageDialog(null, sb.toString(), "Funcionários", JOptionPane.INFORMATION_MESSAGE);
-            }
+                preencheFuncionarioTabela(funcionarios);}
         });
 
         // Ação para adicionar um novo funcionário
@@ -105,17 +106,6 @@ public class InterfaceGrafica extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 List<Carro> carros = carroDAO.loadAll();
                 preencheCarrosTabela(carros);
-
-//                StringBuilder sb = new StringBuilder();
-//                for (Carro c : carros) {
-//                    sb.append("ID: ").append(c.getid())
-//                      .append(", Nome: ").append(c.getNomedocarro())
-//                      .append(", Modelo: ").append(c.getModelo())
-//                      .append(", Ano: ").append(c.getAno())
-//                      .append(", Preço: ").append(c.getPreco())
-//                      .append("\n");
-//                }
-//                JOptionPane.showMessageDialog(null, sb.toString(), "Carros", JOptionPane.INFORMATION_MESSAGE);
             }
         });
 
@@ -145,6 +135,13 @@ public class InterfaceGrafica extends JFrame {
     	for(var c: carros) {
     		Object[] row = new Object[] {c.getNomedocarro(), c.getModelo(), c.getAno(), c.getPreco()};
     		dtm.addRow(row);
+    	}
+    }
+    void preencheFuncionarioTabela(List<Funcionario> funcionario) {
+    	dtmFun.setRowCount(0);
+    	for(var f: funcionario) {
+    		Object[] row = new Object[] {f.getnome(), f.getsalario()};
+    		dtmFun.addRow(row);
     	}
     }
 
